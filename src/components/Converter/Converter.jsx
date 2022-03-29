@@ -1,17 +1,25 @@
 import "./Converter.css";
 import { useEffect, useState } from "react";
+import { Select } from "../Select/Select";
 
 export function Converter() {
   const [initialValue, setInitialValue] = useState(0);
   const [convertedValue, setConvertedValue] = useState(0);
-  const [unit1, setUnit1] = useState(".m");
-  const [unit2, setUnit2] = useState(".m");
+  const [unit1, setUnit1] = useState("Choississez une unité");
+  const [unit2, setUnit2] = useState("Choississez une unité");
+  const [arrayFilter, setArrayFilter] = useState(["Choississez une unité"]);
 
   useEffect(() => {
+    if (unit1.slice(1) === "m") {
+      setArrayFilter(["Choississez une unité", " m", "dm", "cm", "mm"]);
+    } else {
+      setArrayFilter(["Choississez une unité", " l", "dl", "cl", "ml"]);
+    }
+
     switch (unit1) {
-      case ".m":
-      case ".l":
-        if (unit2 === ".m" || unit2 === ".l") setConvertedValue(initialValue);
+      case " m":
+      case " l":
+        if (unit2 === " m" || unit2 === " l") setConvertedValue(initialValue);
         else if (unit2 === "dm" || unit2 === "dl")
           setConvertedValue(initialValue * 10);
         else if (unit2 === "cm" || unit2 === "cl")
@@ -21,7 +29,7 @@ export function Converter() {
         break;
       case "dm":
       case "dl":
-        if (unit2 === ".m" || unit2 === ".l")
+        if (unit2 === " m" || unit2 === " l")
           setConvertedValue(initialValue / 10);
         else if (unit2 === "dm" || unit2 === "dl")
           setConvertedValue(initialValue);
@@ -32,7 +40,7 @@ export function Converter() {
         break;
       case "cm":
       case "cl":
-        if (unit2 === ".m" || unit2 === ".l")
+        if (unit2 === " m" || unit2 === " l")
           setConvertedValue(initialValue / 100);
         else if (unit2 === "dm" || unit2 === "dl")
           setConvertedValue(initialValue / 10);
@@ -43,7 +51,7 @@ export function Converter() {
         break;
       case "mm":
       case "ml":
-        if (unit2 === ".m" || unit2 === ".l")
+        if (unit2 === " m" || unit2 === " l")
           setConvertedValue(initialValue / 1000);
         else if (unit2 === "dm" || unit2 === "dl")
           setConvertedValue(initialValue / 100);
@@ -57,59 +65,46 @@ export function Converter() {
 
   function reset() {
     setInitialValue(0);
-    setUnit1(".m");
-    setUnit2(".m");
+    setConvertedValue(0);
+    setUnit1("Choississez une unité");
+    setUnit2("Choississez une unité");
   }
 
   return (
     <>
       <div className="source">
-        <select
+        <Select
           name="sourceUnit"
-          id="sourceUnit"
-          onChange={(e) => setUnit1(e.target.value)}
-          value={unit1}
-        >
-          <optgroup label="Longueur">
-            <option value=".m">m</option>
-            <option value="dm">dm</option>
-            <option value="cm">cm</option>
-            <option value="mm">mm</option>
-          </optgroup>
-          <optgroup label="Capacité">
-            <option value=".l">l</option>
-            <option value="dl">dl</option>
-            <option value="cl">cl</option>
-            <option value="ml">ml</option>
-          </optgroup>
-        </select>
+          unit={unit1}
+          setUnit={setUnit1}
+          arrayFilter={[
+            "Choississez une unité",
+            " m",
+            "dm",
+            "cm",
+            "mm",
+            " l",
+            "dl",
+            "cl",
+            "ml",
+          ]}
+        />
         <input
           type="number"
           value={initialValue}
-          onChange={(e) => setInitialValue(e.target.value)}
+          onChange={(e) => setInitialValue(parseFloat(e.target.value))}
         />
       </div>
+
       <div className="converted">
         <input type="text" value={convertedValue} readOnly />
-        <select
+        <Select
           name="convertedUnit"
-          id="convertedUnit"
-          onChange={(e) => setUnit2(e.target.value)}
-          value={unit2}
-        >
-          <optgroup label="Longueur" disabled={unit1.slice(1) === "l"}>
-            <option value=".m">m</option>
-            <option value="dm">dm</option>
-            <option value="cm">cm</option>
-            <option value="mm">mm</option>
-          </optgroup>
-          <optgroup label="Capacité" disabled={unit1.slice(1) === "m"}>
-            <option value=".l">l</option>
-            <option value="dl">dl</option>
-            <option value="cl">cl</option>
-            <option value="ml">ml</option>
-          </optgroup>
-        </select>
+          unit={unit2}
+          setUnit={setUnit2}
+          arrayFilter={arrayFilter}
+          disable={unit1 === "Choississez une unité"}
+        />
       </div>
       <button onClick={reset}>Reset</button>
     </>

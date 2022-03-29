@@ -12,3 +12,7 @@ body {
     width: 100%;
     font-size: 2rem;
 }
+
+.app {
+    margin: 5rem;
+}
